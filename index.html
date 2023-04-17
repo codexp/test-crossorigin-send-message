@@ -10,17 +10,21 @@
 <body>
   <input id="msg" type="text">
   <script>
-      const referrer = (window.location != window.parent.location) ? document.referrer : document.location.href
-      const targetOrigin = /localhost/i.test(referrer) ? 'https://localhost' : 'https://*.schoeffel.com'
+      const targetOrigin = (window.location != window.parent.location) ? document.referrer : document.location.href
       const msgInput = document.getElementById('msg')
 
-      console.log({referrer, targetOrigin})
+      console.log({targetOrigin})
 
       msgInput.onkeyup = function () {
           if (event.which === 13) {
-              const msg = this.value
+              const msg = {
+                  type: 'debug',
+                  value: this.value,
+              }
 
               this.value = ''
+
+              console.log('postMessage', {targetOrigin, msg})
 
               parent.postMessage(msg, targetOrigin)
           }
