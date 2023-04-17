@@ -11,9 +11,10 @@
   <input id="msg" type="text">
   <script>
       const i = document.getElementById('msg')
-      const referrer = (window.location != window.parent.location) ? document.referrer : document.location.href;
+      const referrer = (window.location != window.parent.location) ? document.referrer : document.location.href
+      const targetOrigin = /localhost/i.test(referer) ? 'https://localhost' : 'https://schoeffel.com'
 
-      console.log('we are on', referrer)
+      console.log({referrer, targetOrigin})
 
       i.onkeyup = function () {
           if (event.which === 13) {
@@ -21,7 +22,7 @@
 
               this.value = ''
 
-              parent.postMessage(val, 'https://schoeffel.com')
+              parent.postMessage(val, targetOrigin)
           }
       }
   </script
