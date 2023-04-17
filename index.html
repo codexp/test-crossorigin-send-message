@@ -10,19 +10,19 @@
 <body>
   <input id="msg" type="text">
   <script>
-      const i = document.getElementById('msg')
       const referrer = (window.location != window.parent.location) ? document.referrer : document.location.href
       const targetOrigin = /localhost/i.test(referer) ? 'https://localhost' : 'https://schoeffel.com'
+      const msgInput = document.getElementById('msg')
 
       console.log({referrer, targetOrigin})
 
-      i.onkeyup = function () {
+      msgInput.onkeyup = function () {
           if (event.which === 13) {
-              const val = this.value
+              const msg = this.value
 
               this.value = ''
 
-              parent.postMessage(val, targetOrigin)
+              parent.postMessage(msg, targetOrigin)
           }
       }
   </script
