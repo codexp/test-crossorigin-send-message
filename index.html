@@ -11,7 +11,7 @@
   <input id="msg" type="text">
   <script>
       const referrer = (window.location != window.parent.location) ? document.referrer : document.location.href
-      const targetOrigin = /localhost/i.test(referrer) ? 'https://localhost' : 'https://schoeffel.com'
+      const targetOrigin = /localhost/i.test(referrer) ? 'https://localhost' : 'https://*.schoeffel.com'
       const msgInput = document.getElementById('msg')
 
       console.log({referrer, targetOrigin})
