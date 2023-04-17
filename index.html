@@ -8,27 +8,31 @@
     <title>TEST</title>
 </head>
 <body>
-  <input id="msg" type="text">
-  <script>
-      const targetOrigin = (window.location != window.parent.location) ? document.referrer : document.location.href
-      const msgInput = document.getElementById('msg')
+    <input id="msg" type="text">
+    <script>
+        const targetOrigin = (window.location != window.parent.location) ? document.referrer : document.location.href
+        const msgInput = document.getElementById('msg')
 
-      console.log({targetOrigin})
+        console.log({targetOrigin})
 
-      msgInput.onkeyup = function () {
-          if (event.which === 13) {
-              const msg = {
-                  type: 'debug',
-                  value: this.value,
-              }
+        msgInput.onkeyup = function () {
+            if (event.which === 13) {
+                const msg = {
+                    type: 'debug',
+                    value: this.value,
+                }
 
-              this.value = ''
+                this.value = ''
 
-              console.log('postMessage', {targetOrigin, msg})
+                console.log('postMessage', {targetOrigin, msg})
 
-              parent.postMessage(msg, targetOrigin)
-          }
-      }
-  </script
+                parent.postMessage(msg, targetOrigin)
+            }
+        }
+
+        window.addEventListener('messsage', () => {
+            console.log('FE:', event)
+        })
+    </script>
 </body>
 </html>
