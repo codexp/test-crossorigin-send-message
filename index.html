@@ -11,9 +11,9 @@
   <input id="msg" type="text">
   <script>
       const i = document.getElementById('msg')
-      const url = (window.location != window.parent.location) ? document.referrer : document.location.href;
+      const referrer = (window.location != window.parent.location) ? document.referrer : document.location.href;
 
-      console.log('we are on ' + url)
+      console.log('we are on', referrer)
 
       i.onkeyup = function () {
           if (event.which === 13) {
