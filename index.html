@@ -103,7 +103,7 @@
 
         $('#add-to-cart').on('click', () => {
             const variant_id = $('#add-to-cart-article-id').val()
-            const quantity = $('#add-to-cart-quantity').val()
+            const quantity = parseInt($('#add-to-cart-quantity').val()) || 1
             const msg = { action: 'add_to_cart', variant_id, quantity }
 
             addMessage(msg, 'action')
