@@ -1,38 +1,110 @@
 <!doctype html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>TEST</title>
-</head>
-<body>
-    <input id="msg" type="text">
-    <script>
+    <title>Message API Test</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Message API Test</h1>
+
+      <div class="form-group">
+        <label for="msg">Debug message</label>
+        <input id="msg" type="text" class="form-control" aria-describedby="msg-help">
+        <small id="msg-help" class="form-text text-muted">Press <kbd>enter</kbd> to send the message</small>
+      </div>
+
+      <div class="form-group">
+        <label for="msg-log">Message log</label>
+        <ul id="msg-log" class="list-group"></ul>
+      </div>
+
+      <h2>Shop Actions</h2>
+
+      <div class="card">
+        <h5 class="card-header">Add Article to Cart</h5>
+        <div class="card-body">
+          <div class="form-inline">
+            <div class="form-group">
+
+              <div class="input-group mr-2">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">Article Variant ID</div>
+                </div>
+                <input type="text" class="form-control" id="add-to-cart-article-id" placeholder="12345">
+              </div>
+
+              <div class="input-group mr-2">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">Quantity</div>
+                </div>
+                <input type="number" class="form-control" id="add-to-cart-quantity" value="1" min="1" max="1000">
+              </div>
+
+              <button id="add-to-cart" type="button" class="btn btn-primary">Add to cart</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+      <script>
         const targetOrigin = (window.location != window.parent.location) ? document.referrer : document.location.href
         const msgInput = document.getElementById('msg')
-
-        console.log({targetOrigin})
-
-        msgInput.onkeyup = function () {
-            if (event.which === 13) {
-                const msg = {
-                    type: 'debug',
-                    value: this.value,
-                }
-
-                this.value = ''
-
-                console.log('postMessage', {targetOrigin, msg})
-
-                parent.postMessage(msg, targetOrigin)
-            }
+        const msgLog = $('#msg-log')
+        const msgLogTypes = {
+          in: {class: 'badge-success'},
+          out: {class: 'badge-warning'},
+          action: {class: 'badge-primary'},
+          default: {class: 'badge-secondary'},
         }
 
-        window.addEventListener('message', () => {
-            console.log('FE:', event)
+        function addMessage (msg, type = 'in') {
+          const li = $('<li class="list-group-item" />')
+          const badge = $('<span class="badge badge-pill mr-2" />')
+          const cfg = msgLogTypes[type] || msgLogTypes.default
+
+          badge.addClass(cfg.class)
+          badge.text(type)
+
+          li.append(badge)
+          li.append($('<code />').text(JSON.stringify(msg)))
+
+          msgLog.prepend(li)
+        }
+
+        msgInput.onkeyup = function() {
+          if (event.which === 13) {
+            const msg = {
+              type: 'debug',
+              value: this.value,
+            }
+
+            this.value = ''
+
+            addMessage(msg, 'out')
+
+            parent.postMessage(msg, targetOrigin)
+          }
+        }
+
+        window.addEventListener('message', addMessage)
+
+        $('#add-to-cart').on('click', () => {
+            const variant_id = $('#add-to-cart-article-id').val()
+            const quantity = $('#add-to-cart-quantity').val()
+            const msg = { action: 'add_to_cart', variant_id, quantity }
+
+            addMessage(msg, 'action')
+
+            parent.postMessage(msg, targetOrigin)
         })
-    </script>
-</body>
+      </script>
+    </div>
+  </body>
 </html>
