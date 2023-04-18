@@ -44,13 +44,6 @@
                 <input type="text" class="form-control" id="add-to-cart-article-id" placeholder="12345">
               </div>
 
-              <div class="input-group mr-2">
-                <div class="input-group-prepend">
-                  <div class="input-group-text">Quantity</div>
-                </div>
-                <input type="number" class="form-control" id="add-to-cart-quantity" value="1" min="1" max="1000">
-              </div>
-
               <button id="add-to-cart" type="button" class="btn btn-primary">Add to cart</button>
             </div>
           </div>
@@ -103,8 +96,7 @@
 
         $('#add-to-cart').on('click', () => {
             const variant_id = $('#add-to-cart-article-id').val()
-            const quantity = parseInt($('#add-to-cart-quantity').val()) || 1
-            const msg = { action: 'add_to_cart', variant_id, quantity }
+            const msg = { action: 'add_to_cart', variant_id }
 
             addMessage(msg, 'action')
 
