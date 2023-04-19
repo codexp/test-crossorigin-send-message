@@ -20,12 +20,6 @@
 <div class="container">
     <h1 class="mt-5">Message API Test</h1>
 
-    <div class="form-group">
-        <label for="msg">Debug message</label>
-        <input id="msg" type="text" class="form-control" aria-describedby="msg-help">
-        <small id="msg-help" class="form-text text-muted">Press <kbd>enter</kbd> to send the message</small>
-    </div>
-
     <h2>Shop Actions</h2>
 
     <div class="card">
@@ -102,6 +96,12 @@
                 parent.postMessage({ action: "navigate", target: %target% }, %targetOrigin%)
             </code>
         </div>
+    </div>
+
+    <div class="form-group mt-3">
+        <label for="msg">Debug message</label>
+        <input id="msg" type="text" class="form-control" aria-describedby="msg-help">
+        <small id="msg-help" class="form-text text-muted">Press <kbd>enter</kbd> to send the message</small>
     </div>
 
     <div class="form-group mt-4">
