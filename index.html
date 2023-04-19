@@ -37,7 +37,14 @@
                         <div class="input-group-prepend">
                             <div class="input-group-text">Article Variant ID</div>
                         </div>
-                        <input type="text" class="form-control" id="add-to-cart-article-id" placeholder="12345">
+                        <input type="text" class="form-control" id="add-to-cart-article-id" value="12345">
+                    </div>
+
+                    <div class="input-group mr-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">Coupon Code</div>
+                        </div>
+                        <input type="text" class="form-control" id="add-to-cart-coupon-code">
                     </div>
 
                     <button id="add-to-cart" type="button" class="btn btn-primary">Add to cart</button>
@@ -46,7 +53,30 @@
 
             <h6 class="card-subtitle mb-2 mt-3 text-muted">Message</h6>
             <code id="add-to-cart-msg-preview">
-                parent.postMessage({ action: "add_to_cart", variant_id: %variant_id% }, %targetOrigin%)
+                parent.postMessage({ action: "add_to_cart",%variant_id% %coupon%}, %targetOrigin%)
+            </code>
+        </div>
+    </div>
+
+    <div class="card mt-3">
+        <h5 class="card-header">Add Article to Wishlist</h5>
+        <div class="card-body">
+            <div class="form-inline">
+                <div class="form-group">
+                    <div class="input-group mr-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">Article Variant ID</div>
+                        </div>
+                        <input type="text" class="form-control" id="add-to-wishlist-article-id" value="12345">
+                    </div>
+
+                    <button id="add-to-wishlist" type="button" class="btn btn-primary">Add to wishlist</button>
+                </div>
+            </div>
+
+            <h6 class="card-subtitle mb-2 mt-3 text-muted">Message</h6>
+            <code id="add-to-wishlist-msg-preview">
+                parent.postMessage({ action: "add_to_wishlist", variant_id: %variant_id% }, %targetOrigin%)
             </code>
         </div>
     </div>
@@ -97,6 +127,9 @@
         }
         const addToCartMsgPreview = $('#add-to-cart-msg-preview')
         const articleIdInput = $('#add-to-cart-article-id')
+        const couponCodeInput = $('#add-to-cart-coupon-code')
+        const addToWishlistMsgPreview = $('#add-to-wishlist-msg-preview')
+        const wishlistArticleIdInput = $('#add-to-wishlist-article-id')
         const navTargetInput = $('#action-nav-target')
         const navPreview = $('#action-nav-preview')
 
@@ -119,10 +152,29 @@
                 addToCartMsgPreview.data('tpl', addToCartMsgPreview.html())
             }
 
-            const variant_id = articleIdInput.val()
+            const variant_id = articleIdInput.val().trim() || undefined
+            const coupon_code = couponCodeInput.val().trim() || undefined
+            const couponAttr = coupon_code ? `coupon_code: ${JSON.stringify(coupon_code)} ` : ''
+            const variantAttr = !couponAttr || variant_id ? ` variant_id: ${JSON.stringify(variant_id)}` : ''
             const tpl = addToCartMsgPreview.data('tpl')
 
             addToCartMsgPreview.html(
+                tpl
+                    .replace('%variant_id%', variantAttr)
+                    .replace('%coupon%', couponAttr)
+                    .replace('%targetOrigin%', JSON.stringify(targetOrigin))
+            )
+        }
+
+        function updateAddToWishlistMsgPreview () {
+            if (!addToWishlistMsgPreview.data('tpl')) {
+                addToWishlistMsgPreview.data('tpl', addToWishlistMsgPreview.html())
+            }
+
+            const variant_id = wishlistArticleIdInput.val().trim() || undefined
+            const tpl = addToWishlistMsgPreview.data('tpl')
+
+            addToWishlistMsgPreview.html(
                 tpl
                     .replace('%variant_id%', JSON.stringify(variant_id))
                     .replace('%targetOrigin%', JSON.stringify(targetOrigin))
@@ -160,11 +212,31 @@
         }
 
         articleIdInput.on('input', updateAddToCartMsgPreview)
+        couponCodeInput.on('input', updateAddToCartMsgPreview)
+        wishlistArticleIdInput.on('input', updateAddToWishlistMsgPreview)
         navTargetInput.on('input', updateNavPreview)
 
         $('#add-to-cart').on('click', () => {
-            const variant_id = articleIdInput.val()
-            const msg = {action: 'add_to_cart', variant_id}
+            const variant_id = articleIdInput.val().trim() || undefined
+            const coupon_code = couponCodeInput.val().trim() || undefined
+            const msg = {action: 'add_to_cart'}
+
+            if (variant_id) {
+                msg.variant_id = variant_id
+            }
+
+            if (coupon_code) {
+                msg.coupon_code = coupon_code
+            }
+
+            addMessage(msg, 'action')
+
+            parent.postMessage(msg, targetOrigin)
+        })
+
+        $('#add-to-wishlist').on('click', () => {
+            const variant_id = wishlistArticleIdInput.val().trim() || undefined
+            const msg = {action: 'add_to_wishlist', variant_id}
 
             addMessage(msg, 'action')
 
@@ -183,6 +255,7 @@
         window.addEventListener('message', addMessage)
 
         updateAddToCartMsgPreview()
+        updateAddToWishlistMsgPreview()
         updateNavPreview()
     </script>
 </div>
