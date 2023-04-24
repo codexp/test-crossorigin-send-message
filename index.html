@@ -59,9 +59,16 @@
                 <div class="form-group">
                     <div class="input-group mr-2">
                         <div class="input-group-prepend">
-                            <div class="input-group-text">Article Variant ID</div>
+                            <div class="input-group-text">Article ID</div>
                         </div>
-                        <input type="text" class="form-control" id="add-to-wishlist-article-id" value="12345">
+                        <input type="text" class="form-control" id="add-to-wishlist-article-id" value="4950">
+                    </div>
+
+                    <div class="input-group mr-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">Article Option Value ID</div>
+                        </div>
+                        <input type="text" class="form-control" id="add-to-wishlist-article-option-value-id" value="42">
                     </div>
 
                     <button id="add-to-wishlist" type="button" class="btn btn-primary">Add to wishlist</button>
@@ -70,7 +77,7 @@
 
             <h6 class="card-subtitle mb-2 mt-3 text-muted">Message</h6>
             <code id="add-to-wishlist-msg-preview">
-                parent.postMessage({ action: "add_to_wishlist", variant_id: %variant_id% }, %targetOrigin%)
+                parent.postMessage({ action: "add_to_wishlist", article_id: %article_id%, article_option_value_id: %article_option_value_id% }, %targetOrigin%)
             </code>
         </div>
     </div>
@@ -130,6 +137,7 @@
         const couponCodeInput = $('#add-to-cart-coupon-code')
         const addToWishlistMsgPreview = $('#add-to-wishlist-msg-preview')
         const wishlistArticleIdInput = $('#add-to-wishlist-article-id')
+        const wishlistArticleOptionValueIdInput = $('#add-to-wishlist-article-option-value-id')
         const navTargetInput = $('#action-nav-target')
         const navPreview = $('#action-nav-preview')
 
@@ -171,12 +179,14 @@
                 addToWishlistMsgPreview.data('tpl', addToWishlistMsgPreview.html())
             }
 
-            const variant_id = wishlistArticleIdInput.val().trim() || undefined
+            const article_id = wishlistArticleIdInput.val().trim() || undefined
+            const article_option_value_id = wishlistArticleOptionValueIdInput.val().trim() || undefined
             const tpl = addToWishlistMsgPreview.data('tpl')
 
             addToWishlistMsgPreview.html(
                 tpl
-                    .replace('%variant_id%', JSON.stringify(variant_id))
+                    .replace('%article_id%', JSON.stringify(article_id))
+                    .replace('%article_option_value_id%', JSON.stringify(article_option_value_id))
                     .replace('%targetOrigin%', JSON.stringify(targetOrigin))
             )
         }
@@ -235,8 +245,9 @@
         })
 
         $('#add-to-wishlist').on('click', () => {
-            const variant_id = wishlistArticleIdInput.val().trim() || undefined
-            const msg = {action: 'add_to_wishlist', variant_id}
+            const article_id = wishlistArticleIdInput.val().trim() || undefined
+            const article_option_value_id = wishlistArticleOptionValueIdInput.val().trim() || undefined
+            const msg = {action: 'add_to_wishlist', article_id, article_option_value_id}
 
             addMessage(msg, 'action')
 
