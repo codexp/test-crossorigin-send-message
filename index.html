@@ -47,7 +47,7 @@
 
             <h6 class="card-subtitle mb-2 mt-3 text-muted">Message</h6>
             <code id="add-to-cart-msg-preview">
-                parent.postMessage({ action: "add_to_cart",%variant_id% %coupon%}, %targetOrigin%)
+                parent.postMessage({ action: "add_to_cart",%article_variant_id% %coupon%}, %targetOrigin%)
             </code>
         </div>
     </div>
@@ -66,9 +66,9 @@
 
                     <div class="input-group mr-2">
                         <div class="input-group-prepend">
-                            <div class="input-group-text">Article Option Value ID</div>
+                            <div class="input-group-text">Color ID</div>
                         </div>
-                        <input type="text" class="form-control" id="add-to-wishlist-article-option-value-id" value="42">
+                        <input type="text" class="form-control" id="add-to-wishlist-color-id" value="42">
                     </div>
 
                     <button id="add-to-wishlist" type="button" class="btn btn-primary">Add to wishlist</button>
@@ -77,7 +77,7 @@
 
             <h6 class="card-subtitle mb-2 mt-3 text-muted">Message</h6>
             <code id="add-to-wishlist-msg-preview">
-                parent.postMessage({ action: "add_to_wishlist", article_id: %article_id%, article_option_value_id: %article_option_value_id% }, %targetOrigin%)
+                parent.postMessage({ action: "add_to_wishlist", article_id: %article_id%, color_id: %color_id% }, %targetOrigin%)
             </code>
         </div>
     </div>
@@ -137,7 +137,7 @@
         const couponCodeInput = $('#add-to-cart-coupon-code')
         const addToWishlistMsgPreview = $('#add-to-wishlist-msg-preview')
         const wishlistArticleIdInput = $('#add-to-wishlist-article-id')
-        const wishlistArticleOptionValueIdInput = $('#add-to-wishlist-article-option-value-id')
+        const wishlistColorId = $('#add-to-wishlist-color-id')
         const navTargetInput = $('#action-nav-target')
         const navPreview = $('#action-nav-preview')
 
@@ -160,15 +160,15 @@
                 addToCartMsgPreview.data('tpl', addToCartMsgPreview.html())
             }
 
-            const variant_id = articleIdInput.val().trim() || undefined
+            const article_variant_id = articleIdInput.val().trim() || undefined
             const coupon_code = couponCodeInput.val().trim() || undefined
             const couponAttr = coupon_code ? `coupon_code: ${JSON.stringify(coupon_code)} ` : ''
-            const variantAttr = !couponAttr || variant_id ? ` variant_id: ${JSON.stringify(variant_id)}` : ''
+            const variantAttr = !couponAttr || article_variant_id ? ` article_variant_id: ${JSON.stringify(article_variant_id)}` : ''
             const tpl = addToCartMsgPreview.data('tpl')
 
             addToCartMsgPreview.html(
                 tpl
-                    .replace('%variant_id%', variantAttr)
+                    .replace('%article_variant_id%', variantAttr)
                     .replace('%coupon%', couponAttr)
                     .replace('%targetOrigin%', JSON.stringify(targetOrigin))
             )
@@ -180,13 +180,13 @@
             }
 
             const article_id = wishlistArticleIdInput.val().trim() || undefined
-            const article_option_value_id = wishlistArticleOptionValueIdInput.val().trim() || undefined
+            const color_id = wishlistColorId.val().trim() || undefined
             const tpl = addToWishlistMsgPreview.data('tpl')
 
             addToWishlistMsgPreview.html(
                 tpl
                     .replace('%article_id%', JSON.stringify(article_id))
-                    .replace('%article_option_value_id%', JSON.stringify(article_option_value_id))
+                    .replace('%color_id%', JSON.stringify(color_id))
                     .replace('%targetOrigin%', JSON.stringify(targetOrigin))
             )
         }
@@ -224,16 +224,16 @@
         articleIdInput.on('input', updateAddToCartMsgPreview)
         couponCodeInput.on('input', updateAddToCartMsgPreview)
         wishlistArticleIdInput.on('input', updateAddToWishlistMsgPreview)
-        wishlistArticleOptionValueIdInput.on('input', updateAddToWishlistMsgPreview)
+        wishlistColorId.on('input', updateAddToWishlistMsgPreview)
         navTargetInput.on('input', updateNavPreview)
 
         $('#add-to-cart').on('click', () => {
-            const variant_id = articleIdInput.val().trim() || undefined
+            const article_variant_id = articleIdInput.val().trim() || undefined
             const coupon_code = couponCodeInput.val().trim() || undefined
             const msg = {action: 'add_to_cart'}
 
-            if (variant_id) {
-                msg.variant_id = variant_id
+            if (article_variant_id) {
+                msg.article_variant_id = article_variant_id
             }
 
             if (coupon_code) {
@@ -247,8 +247,8 @@
 
         $('#add-to-wishlist').on('click', () => {
             const article_id = wishlistArticleIdInput.val().trim() || undefined
-            const article_option_value_id = wishlistArticleOptionValueIdInput.val().trim() || undefined
-            const msg = {action: 'add_to_wishlist', article_id, article_option_value_id}
+            const color_id = wishlistColorId.val().trim() || undefined
+            const msg = {action: 'add_to_wishlist', article_id, color_id}
 
             addMessage(msg, 'action')
 
